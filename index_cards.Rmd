@@ -73,4 +73,3 @@ data %>%
                   pageLength = 1))
 
 ```
-
