@@ -56,7 +56,9 @@ This directory is the product of the Center for Social Innovation's efforts to d
 
 <center>
 ![](images/index_card.png)
-[Download raw data](/nonprofit directory.xlsx)
+<center>
+[Download raw data](https://github.com/SunnyYShao/indexcard_presentation/blob/master/nonprofit%20directory.xlsx?raw=true)
+</center>
 ```{r}
 # Load Data ---------------------------------------------------------------
 dta_current <- read_rds("dta/raw/2020-03-19.rds")
