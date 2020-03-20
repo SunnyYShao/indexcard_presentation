@@ -23,6 +23,8 @@ library(officer)
 library(here)
 library(haven)
 library(dplyr)
+library(writexl)
+library(openxlsx)
 # 
 # all_files <- list.files(here("dta/raw",""),".rds")
 # all_files <- str_remove(all_files,".rds")
@@ -54,6 +56,7 @@ This directory is the product of the Center for Social Innovation's efforts to d
 
 <center>
 ![](images/index_card.png)
+[Download raw data](/nonprofit directory.xlsx)
 ```{r}
 # Load Data ---------------------------------------------------------------
 dta_current <- read_rds("dta/raw/2020-03-19.rds")
@@ -88,10 +91,18 @@ df <- df %>%
          Achievements = q43,
          Name = q45_1_text,
          Email = q45_3_text,
-         Website = q45_15_text) 
+         Website = q45_15_text) %>% 
+  select(-q44)
 
 df[129,1] <- "WELL-ONE HEALTH INC."
 df[130,1] <- "Baldy View Regional Occupational Program"
+
+# wb <- createWorkbook()
+# addWorksheet(wb, sheetName = "data", gridLines = T)
+# writeDataTable(wb, x = df, sheet = "data", startCol = 1, startRow = 1, 
+#                    bandedRows=F, firstColumn=T, colNames = T)
+# saveWorkbook(wb, file = "nonprofit directory.xlsx", overwrite = T)
+
 df %>%
   mutate(Profile = paste("<center><strong>", Organization, "</strong></center><br>", 
                          "<strong>Contact Person: </strong>", Name,
@@ -102,10 +113,10 @@ df %>%
                          "<br><br><strong>Achievements:</strong><br>", Achievements), 
          sep = "") %>%
   select(Profile) %>% 
-  DT::datatable(escape = F, rownames = F,
-                options = list(
-                  sDom = '<"top">t<"bottom">lfip',
-                  pageLength = 1))
+     DT::datatable(escape = F, rownames = F,
+              options = list(
+                sDom = '<"top">t<"bottom">lfip',
+                pageLength = 1))
 
 # data <- read_csv("data/test.csv")
 # 
