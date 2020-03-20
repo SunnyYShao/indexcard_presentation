@@ -1,6 +1,6 @@
 library(tidyverse)
 #open the rds file in your directory
-dta_current <- read_rds("dta/raw/2020-03-11.rds")
+dta_current <- read_rds("dta/raw/2020-03-19.rds")
 
 # Clean names
 dta_current <- dta_current %>% janitor::clean_names()

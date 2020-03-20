@@ -55,21 +55,69 @@ This directory is the product of the Center for Social Innovation's efforts to d
 <center>
 ![](images/index_card.png)
 ```{r}
-data <- read_csv("data/test.csv")
+# Load Data ---------------------------------------------------------------
+dta_current <- read_rds("dta/raw/2020-03-19.rds")
+# Clean names
+dta_current <- dta_current %>% janitor::clean_names()
 
-data %>% 
-  mutate(Profile = paste("<center><strong>", name, "</strong></center><br>", 
-                         "<strong>Contact Person: </strong>", contact,
-                         "<br><strong>Email: </strong>", email,
-                         "<br><strong>Website: </strong>", website,
-                         "<br><br><strong>Mission:</strong><br>", mission,
-                         "<br><br><strong>Activities:</strong><br>", activity,
-                         "<br><br><strong>Achievements:</strong><br>", achievements), 
+## Recoding dta$finished
+dta_current$finished <- as.character(dta_current$finished)
+dta_current$finished <- fct_recode(dta_current$finished,
+                                   "Complete" = "1",
+                                   "Incomplete" = "0")
+
+dta_current %>%
+  filter(q3 == "My organization is listed above") -> dta_sub
+
+dta_current %>%
+  filter(q3 != "My organization is listed above") %>%
+  filter(q4_1_text != "NA") %>%
+  mutate(q4_1_text = paste(q4_1_text, q4_2_text, sep = ", ")) %>%
+  mutate(q2 = q4_1_text) -> dta_sub2
+
+df <- rbind(dta_sub,dta_sub2)
+
+df %>%
+  select(q2,q41, q42, q43, q45_1_text,q45_3_text,q45_15_text,q44) %>% 
+  filter(q41 != "") %>%
+  filter(q44 == "Yes, please include this information") %>%
+  arrange(q2) %>%
+  rename(Organization = q2,
+         Mission = q41,
+         Activities = q42,
+         Achievements = q43,
+         Name = q45_1_text,
+         Email = q45_3_text,
+         Website = q45_15_text) %>%
+  mutate(Profile = paste("<center><strong>", Organization, "</strong></center><br>", 
+                         "<strong>Contact Person: </strong>", Name,
+                         "<br><strong>Email: </strong>", Email,
+                         "<br><strong>Website: </strong>", Website,
+                         "<br><br><strong>Mission:</strong><br>", Mission,
+                         "<br><br><strong>Activities:</strong><br>", Activities,
+                         "<br><br><strong>Achievements:</strong><br>", Achievements), 
          sep = "") %>%
   select(Profile) %>% 
   DT::datatable(escape = F, rownames = F,
                 options = list(
                   sDom = '<"top">t<"bottom">lfip',
                   pageLength = 1))
+
+# data <- read_csv("data/test.csv")
+# 
+# data %>% 
+#   mutate(Profile = paste("<center><strong>", name, "</strong></center><br>", 
+#                          "<strong>Contact Person: </strong>", contact,
+#                          "<br><strong>Email: </strong>", email,
+#                          "<br><strong>Website: </strong>", website,
+#                          "<br><br><strong>Mission:</strong><br>", mission,
+#                          "<br><br><strong>Activities:</strong><br>", activity,
+#                          "<br><br><strong>Achievements:</strong><br>", achievements), 
+#          sep = "") %>%
+#   select(Profile) %>% 
+#   DT::datatable(escape = F, rownames = F,
+#                 options = list(
+#                   sDom = '<"top">t<"bottom">lfip',
+#                   pageLength = 1))
 
 ```
