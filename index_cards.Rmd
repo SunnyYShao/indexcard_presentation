@@ -71,13 +71,13 @@ dta_current %>%
 
 dta_current %>%
   filter(q3 != "My organization is listed above") %>%
-  filter(q4_1_text != "NA") %>%
+  filter(is.na(q4_1_text) == F) %>%
   mutate(q4_1_text = paste(q4_1_text, q4_2_text, sep = ", ")) %>%
   mutate(q2 = q4_1_text) -> dta_sub2
 
 df <- rbind(dta_sub,dta_sub2)
 
-df %>%
+df <- df %>%
   select(q2,q41, q42, q43, q45_1_text,q45_3_text,q45_15_text,q44) %>% 
   filter(q41 != "") %>%
   filter(q44 == "Yes, please include this information") %>%
@@ -88,7 +88,11 @@ df %>%
          Achievements = q43,
          Name = q45_1_text,
          Email = q45_3_text,
-         Website = q45_15_text) %>%
+         Website = q45_15_text) 
+
+df[129,1] <- "WELL-ONE HEALTH INC."
+df[130,1] <- "Baldy View Regional Occupational Program"
+df %>%
   mutate(Profile = paste("<center><strong>", Organization, "</strong></center><br>", 
                          "<strong>Contact Person: </strong>", Name,
                          "<br><strong>Email: </strong>", Email,
